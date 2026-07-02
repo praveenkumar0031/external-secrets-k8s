@@ -1,0 +1,20 @@
+
+
+aws iam create-policy `
+  --policy-name ExternalSecretsPolicy `
+  --policy-document file://aws/iam/secrets-policy.json
+
+  "https://oidc.eks.us-east-1.amazonaws.com/id/96F8363BF82A93FBC92980B2B0F8E114"                                        
+
+
+ aws secretsmanager put-secret-value `                    
+>>   --secret-id payment-secret `                                                         
+>>   --secret-string file://aws/secrets/payment-secret.json
+
+
+  
+  kubectl get secret payment-secret -o jsonpath="{.data.DB_USERNAME}" | % { [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_)) }
+
+kubectl get secret payment-secret -o jsonpath="{.data.DB_PASSWORD}" | % { [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_)) }
+
+kubectl get secret payment-secret -o jsonpath="{.data.JWT_SECRET}" | % { [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_)) }
